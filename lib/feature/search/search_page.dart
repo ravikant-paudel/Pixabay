@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pixabay/feature/favourite/favorite_screen.dart';
+import 'package:pixabay/feature/favourite/favourite_bloc.dart';
 import 'package:pixabay/feature/models/image_model.dart';
 import 'package:pixabay/feature/search/search_bloc.dart';
 import 'package:pixabay/feature/search/search_repository.dart';
@@ -13,7 +15,7 @@ class SearchPage extends StatelessWidget {
       create: (context) => SearchBloc(SearchRepository()),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Image Search'),
+          title: const Text('Search Image'),
           actions: [
             IconButton(
               icon: const Icon(Icons.favorite),
@@ -95,30 +97,37 @@ class _ImageGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      padding: const EdgeInsets.all(8),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 0.7,
-      ),
-      itemCount: images.length,
-      itemBuilder: (context, index) => ImageItem(image: images[index]),
-    );
+        padding: const EdgeInsets.all(8),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: 0.7,
+        ),
+        itemCount: images.length,
+        itemBuilder: (context, index) {
+          final image = images[index];
+          final isFavorite = context.read<FavoriteBloc>().favorites.contains(image);
+          return ImageItem(
+            image: image,
+            isFavorite: isFavorite,
+            onTap: () => context.read<FavoriteBloc>().add(AddToFavorites(image)),
+          );
+        });
   }
 }
 
-class ImageItem extends StatefulWidget {
+class ImageItem extends StatelessWidget {
   final ImageModel image;
+  final bool isFavorite;
+  final VoidCallback onTap;
 
-  const ImageItem({super.key, required this.image});
-
-  @override
-  _ImageItemState createState() => _ImageItemState();
-}
-
-class _ImageItemState extends State<ImageItem> {
-  bool isFavorited = false;
+  const ImageItem({
+    super.key,
+    required this.image,
+    required this.isFavorite,
+    required this.onTap,
+  });
 
   String _formatSize(int bytes) {
     if (bytes < 1024) return '$bytes B';
@@ -129,7 +138,7 @@ class _ImageItemState extends State<ImageItem> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => setState(() => isFavorited = !isFavorited),
+      onTap: onTap,
       child: Card(
         child: Column(
           children: [
@@ -138,12 +147,12 @@ class _ImageItemState extends State<ImageItem> {
                 alignment: Alignment.topRight,
                 children: [
                   Image.network(
-                    widget.image.imageUrl,
+                    image.imageUrl,
                     fit: BoxFit.cover,
                     width: double.infinity,
                   ),
                   Icon(
-                    isFavorited ? Icons.favorite : Icons.favorite_border,
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
                     color: Colors.red,
                   ),
                 ],
@@ -155,28 +164,16 @@ class _ImageItemState extends State<ImageItem> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.image.ownerName,
+                    image.ownerName,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(_formatSize(widget.image.imageSize)),
+                  Text(_formatSize(image.imageSize)),
                 ],
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class FavoriteScreen extends StatelessWidget {
-  const FavoriteScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Favorites')),
-      body: const Center(child: Text('Favorite images will appear here')),
     );
   }
 }
