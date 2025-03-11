@@ -4,12 +4,12 @@ import 'package:pixabay/feature/models/image_model.dart';
 abstract class FavoriteEvent {}
 
 class AddToFavorites extends FavoriteEvent {
-  final ImageModel image; // Still final for immutability
+  final ImageModel image;
   AddToFavorites(this.image);
 }
 
 class RemoveFromFavorites extends FavoriteEvent {
-  final ImageModel image; // Still final
+  final ImageModel image;
   RemoveFromFavorites(this.image);
 }
 
@@ -18,7 +18,7 @@ abstract class FavoriteState {}
 class FavoriteInitial extends FavoriteState {}
 
 class FavoritesUpdated extends FavoriteState {
-  final List<ImageModel> favorites; // Maintain immutability
+  final List<ImageModel> favorites;
   FavoritesUpdated(this.favorites);
 }
 

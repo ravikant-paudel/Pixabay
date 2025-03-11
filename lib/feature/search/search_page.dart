@@ -107,7 +107,7 @@ class _ImageGrid extends StatelessWidget {
         itemCount: images.length,
         itemBuilder: (context, index) {
           final image = images[index];
-          final isFavorite = context.read<FavoriteBloc>().favorites.contains(image);
+          final isFavorite = context.watch<FavoriteBloc>().favorites.contains(image);
           return ImageItem(
             image: image,
             isFavorite: isFavorite,
@@ -128,12 +128,6 @@ class ImageItem extends StatelessWidget {
     required this.isFavorite,
     required this.onTap,
   });
-
-  String _formatSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1048576) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    return '${(bytes / 1048576).toStringAsFixed(1)} MB';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -175,5 +169,11 @@ class ImageItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatSize(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1048576) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    return '${(bytes / 1048576).toStringAsFixed(1)} MB';
   }
 }
