@@ -8,7 +8,13 @@ class SearchService {
   Future<ApiResponseModel> searchImages(String query, {int page = 1}) async {
     final response = await _apiService.get(
       '',
-      queryParameters: {'key': ApiConfig.apiKey, 'q': query, 'image_type': 'photo', 'per_page': 20, 'page': page},
+      queryParameters: {
+        'key': ApiConfig.apiKey,
+        'q': query,
+        'image_type': 'photo',
+        'per_page': 20,
+        'page': page,
+      },
     );
     return ApiResponseModel.fromJson(response.data);
   }

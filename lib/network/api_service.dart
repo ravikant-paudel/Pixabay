@@ -5,7 +5,19 @@ import 'api_config.dart';
 class ApiService {
   final Dio _dio;
 
-  ApiService() : _dio = Dio(BaseOptions(baseUrl: ApiConfig.baseUrl));
+  ApiService() : _dio = Dio(BaseOptions(baseUrl: ApiConfig.baseUrl)) {
+    _dio.interceptors.add(LogInterceptor(
+      request: true,
+      requestHeader: true,
+      requestBody: true,
+      responseHeader: true,
+      responseBody: true,
+      error: true,
+      logPrint: (log) {
+        print(log);
+      },
+    ));
+  }
 
   Future<Response> get(
     String path, {

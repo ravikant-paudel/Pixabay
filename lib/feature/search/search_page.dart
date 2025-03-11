@@ -83,6 +83,7 @@ class _SearchResults extends StatelessWidget {
           return _ImageGrid(
             images: state.images,
             hasMore: state.hasMore,
+            isLoadingMore: state.isLoadingMore,
             onLoadMore: () => context.read<SearchBloc>().add(LoadMoreSearchEvent()),
           );
         } else if (state is SearchError) {
@@ -97,11 +98,13 @@ class _SearchResults extends StatelessWidget {
 class _ImageGrid extends StatelessWidget {
   final List<ImageModel> images;
   final bool hasMore;
+  final bool isLoadingMore;
   final VoidCallback onLoadMore;
 
   const _ImageGrid({
     required this.images,
     required this.hasMore,
+    required this.isLoadingMore,
     required this.onLoadMore,
   });
 
@@ -109,32 +112,43 @@ class _ImageGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
-        if (notification is ScrollEndNotification && notification.metrics.pixels == notification.metrics.maxScrollExtent && hasMore) {
+        if (notification is ScrollEndNotification &&
+            notification.metrics.pixels == notification.metrics.maxScrollExtent &&
+            hasMore &&
+            !isLoadingMore) {
           onLoadMore();
         }
         return false;
       },
-      child: GridView.builder(
-        padding: const EdgeInsets.all(8),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          childAspectRatio: 0.7,
-        ),
-        itemCount: images.length + (hasMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index >= images.length) {
-            return const Center(child: LinearProgressIndicator());
-          }
-          final image = images[index];
-          final isFavorite = context.watch<FavoriteBloc>().favorites.contains(image);
-          return ImageItem(
-            image: image,
-            isFavorite: isFavorite,
-            onTap: () => context.read<FavoriteBloc>().add(AddToFavoriteEvent(image)),
-          );
-        },
+      child: Column(
+        children: [
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(8),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 0.7,
+              ),
+              itemCount: images.length,
+              itemBuilder: (context, index) {
+                final image = images[index];
+                final isFavorite = context.watch<FavoriteBloc>().favorites.contains(image);
+                return ImageItem(
+                  image: image,
+                  isFavorite: isFavorite,
+                  onTap: () => context.read<FavoriteBloc>().add(AddToFavoriteEvent(image)),
+                );
+              },
+            ),
+          ),
+          if (isLoadingMore)
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: LinearProgressIndicator(),
+            )
+        ],
       ),
     );
   }

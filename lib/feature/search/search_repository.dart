@@ -6,7 +6,10 @@ class SearchRepository {
 
   Future<ApiResponseModel> searchImages(String query, {int page = 1}) async {
     try {
-      return await _searchService.searchImages(query);
+      return await _searchService.searchImages(
+        query,
+        page: page,
+      );
     } catch (e) {
       throw Exception('Failed to search images: $e');
     }

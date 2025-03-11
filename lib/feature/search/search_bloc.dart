@@ -23,21 +23,25 @@ class SearchLoaded extends SearchState {
     required this.images,
     this.hasMore = true,
     this.page = 1,
+    this.isLoadingMore = false,
   });
 
   final List<ImageModel> images;
   final bool hasMore;
   final int page;
+  final bool isLoadingMore;
 
   SearchLoaded copyWith({
     List<ImageModel>? images,
     bool? hasMore,
     int? page,
+    bool? isLoadingMore,
   }) {
     return SearchLoaded(
       images: images ?? this.images,
       hasMore: hasMore ?? this.hasMore,
       page: page ?? this.page,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 }
@@ -80,6 +84,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   Future<void> _onLoadMore(LoadMoreSearchEvent event, Emitter<SearchState> emit) async {
     final currentState = state;
     if (currentState is SearchLoaded && currentState.hasMore) {
+      emit(currentState.copyWith(isLoadingMore: true));
       try {
         final nextPage = currentState.page + 1;
         final response = await _repository.searchImages(
@@ -91,8 +96,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           images: [...currentState.images, ...response.hits],
           hasMore: response.hits.length == 20,
           page: nextPage,
+          isLoadingMore: false,
         ));
       } catch (e) {
+        emit(currentState.copyWith(isLoadingMore: false));
         emit(SearchError(e.toString()));
       }
     }
