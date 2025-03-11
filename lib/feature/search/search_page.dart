@@ -37,8 +37,19 @@ class SearchPage extends StatelessWidget {
   }
 }
 
-class _SearchBar extends StatelessWidget {
+class _SearchBar extends StatefulWidget {
+  @override
+  _SearchBarState createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<_SearchBar> {
   final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +60,18 @@ class _SearchBar extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: _controller,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Search images...',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                suffixIcon: _controller.text.isEmpty
+                    ? null
+                    : IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _controller.clear();
+                          context.read<SearchBloc>().add(FetchSearchEvent(''));
+                        },
+                      ),
               ),
             ),
           ),
@@ -80,12 +100,16 @@ class _SearchResults extends StatelessWidget {
         } else if (state is SearchLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is SearchLoaded) {
-          return _ImageGrid(
-            images: state.images,
-            hasMore: state.hasMore,
-            isLoadingMore: state.isLoadingMore,
-            onLoadMore: () => context.read<SearchBloc>().add(LoadMoreSearchEvent()),
-          );
+          if (state.images.isEmpty) {
+            return const Center(child: Text('Image not found'));
+          } else {
+            return _ImageGrid(
+              images: state.images,
+              hasMore: state.hasMore,
+              isLoadingMore: state.isLoadingMore,
+              onLoadMore: () => context.read<SearchBloc>().add(LoadMoreSearchEvent()),
+            );
+          }
         } else if (state is SearchError) {
           return Center(child: Text(state.message));
         }

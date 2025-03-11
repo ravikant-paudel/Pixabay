@@ -66,6 +66,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     _searchQuery = event.query;
+    if (_searchQuery.isEmpty) {
+      emit(SearchInitial());
+      return;
+    }
     emit(SearchLoading());
     try {
       final response = await _repository.searchImages(event.query);
