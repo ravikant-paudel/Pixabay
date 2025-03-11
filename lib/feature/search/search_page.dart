@@ -111,7 +111,7 @@ class _ImageGrid extends StatelessWidget {
           return ImageItem(
             image: image,
             isFavorite: isFavorite,
-            onTap: () => context.read<FavoriteBloc>().add(AddToFavorites(image)),
+            onTap: () => context.read<FavoriteBloc>().add(AddToFavoriteEvent(image)),
           );
         });
   }

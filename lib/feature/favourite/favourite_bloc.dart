@@ -3,14 +3,14 @@ import 'package:pixabay/feature/models/image_model.dart';
 
 abstract class FavoriteEvent {}
 
-class AddToFavorites extends FavoriteEvent {
+class AddToFavoriteEvent extends FavoriteEvent {
   final ImageModel image;
-  AddToFavorites(this.image);
+  AddToFavoriteEvent(this.image);
 }
 
-class RemoveFromFavorites extends FavoriteEvent {
+class RemoveFromFavoriteEvent extends FavoriteEvent {
   final ImageModel image;
-  RemoveFromFavorites(this.image);
+  RemoveFromFavoriteEvent(this.image);
 }
 
 abstract class FavoriteState {}
@@ -26,20 +26,20 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
   final List<ImageModel> _favorites = [];
 
   FavoriteBloc() : super(FavoriteInitial()) {
-    on<AddToFavorites>(_addToFavorites);
-    on<RemoveFromFavorites>(_removeFromFavorites);
+    on<AddToFavoriteEvent>(_addToFavorites);
+    on<RemoveFromFavoriteEvent>(_removeFromFavorites);
   }
 
   List<ImageModel> get favorites => List.unmodifiable(_favorites);
 
-  void _addToFavorites(AddToFavorites event, Emitter<FavoriteState> emit) {
+  void _addToFavorites(AddToFavoriteEvent event, Emitter<FavoriteState> emit) {
     if (!_favorites.contains(event.image)) {
       _favorites.add(event.image);
       emit(FavoritesUpdated(List.from(_favorites)));
     }
   }
 
-  void _removeFromFavorites(RemoveFromFavorites event, Emitter<FavoriteState> emit) {
+  void _removeFromFavorites(RemoveFromFavoriteEvent event, Emitter<FavoriteState> emit) {
     _favorites.remove(event.image);
     emit(FavoritesUpdated(List.from(_favorites)));
   }

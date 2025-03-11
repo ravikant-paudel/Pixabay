@@ -52,7 +52,7 @@ class FavoriteScreen extends StatelessWidget {
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
           TextButton(
               onPressed: () {
-                context.read<FavoriteBloc>().add(RemoveFromFavorites(image));
+                context.read<FavoriteBloc>().add(RemoveFromFavoriteEvent(image));
                 Navigator.pop(context);
               },
               child: const Text('Remove')),
