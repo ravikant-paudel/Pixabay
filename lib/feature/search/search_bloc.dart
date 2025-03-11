@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pixabay/feature/models/image_model.dart';
 import 'package:pixabay/feature/search/search_repository.dart';
 
+// Events
 abstract class SearchEvent {}
 
 class FetchSearchEvent extends SearchEvent {
@@ -12,6 +13,9 @@ class FetchSearchEvent extends SearchEvent {
 
 class LoadMoreSearchEvent extends SearchEvent {}
 
+class ResetSearchEvent extends SearchEvent {}
+
+// States
 abstract class SearchState {}
 
 class SearchInitial extends SearchState {}
@@ -19,17 +23,17 @@ class SearchInitial extends SearchState {}
 class SearchLoading extends SearchState {}
 
 class SearchLoaded extends SearchState {
+  final List<ImageModel> images;
+  final bool hasMore;
+  final int page;
+  final bool isLoadingMore;
+
   SearchLoaded({
     required this.images,
     this.hasMore = true,
     this.page = 1,
     this.isLoadingMore = false,
   });
-
-  final List<ImageModel> images;
-  final bool hasMore;
-  final int page;
-  final bool isLoadingMore;
 
   SearchLoaded copyWith({
     List<ImageModel>? images,
@@ -47,11 +51,12 @@ class SearchLoaded extends SearchState {
 }
 
 class SearchError extends SearchState {
-  SearchError(this.message);
-
   final String message;
+
+  SearchError(this.message);
 }
 
+// BLoC
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final SearchRepository _repository;
   String _searchQuery = '';
@@ -59,6 +64,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc(this._repository) : super(SearchInitial()) {
     on<FetchSearchEvent>(_onFetch);
     on<LoadMoreSearchEvent>(_onLoadMore);
+    on<ResetSearchEvent>(_onReset);
   }
 
   Future<void> _onFetch(
@@ -70,6 +76,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       emit(SearchInitial());
       return;
     }
+
     emit(SearchLoading());
     try {
       final response = await _repository.searchImages(event.query);
@@ -77,7 +84,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         SearchLoaded(
           images: response.hits,
           hasMore: response.hits.length == 20,
-          page: response.page,
+          page: 1,
         ),
       );
     } catch (e) {
@@ -107,5 +114,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         emit(SearchError(e.toString()));
       }
     }
+  }
+
+  Future<void> _onReset(ResetSearchEvent event, Emitter<SearchState> emit) async {
+    emit(SearchInitial());
   }
 }
