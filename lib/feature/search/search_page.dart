@@ -58,6 +58,7 @@ class _SearchBar extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
+              FocusManager.instance.primaryFocus?.unfocus();
               context.read<SearchBloc>().add(FetchSearchEvent(_controller.text));
             },
           ),
@@ -75,7 +76,7 @@ class _SearchResults extends StatelessWidget {
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         if (state is SearchInitial) {
-          return const Center(child: Text('Start searching!'));
+          return const Center(child: Text('Start searching for image!'));
         } else if (state is SearchLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is SearchLoaded) {
@@ -158,10 +159,12 @@ class ImageItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    image.ownerName,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    "Name: ${image.ownerName}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  Text(_formatSize(image.imageSize)),
+                  Text("Size: ${_formatSize(image.imageSize)}"),
                 ],
               ),
             ),
