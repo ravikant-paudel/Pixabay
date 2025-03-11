@@ -80,7 +80,11 @@ class _SearchResults extends StatelessWidget {
         } else if (state is SearchLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is SearchLoaded) {
-          return _ImageGrid(images: state.images);
+          return _ImageGrid(
+            images: state.images,
+            hasMore: state.hasMore,
+            onLoadMore: () => context.read<SearchBloc>().add(LoadMoreSearchEvent()),
+          );
         } else if (state is SearchError) {
           return Center(child: Text(state.message));
         }
@@ -92,12 +96,25 @@ class _SearchResults extends StatelessWidget {
 
 class _ImageGrid extends StatelessWidget {
   final List<ImageModel> images;
+  final bool hasMore;
+  final VoidCallback onLoadMore;
 
-  const _ImageGrid({required this.images});
+  const _ImageGrid({
+    required this.images,
+    required this.hasMore,
+    required this.onLoadMore,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (notification is ScrollEndNotification && notification.metrics.pixels == notification.metrics.maxScrollExtent && hasMore) {
+          onLoadMore();
+        }
+        return false;
+      },
+      child: GridView.builder(
         padding: const EdgeInsets.all(8),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
@@ -105,8 +122,11 @@ class _ImageGrid extends StatelessWidget {
           mainAxisSpacing: 8,
           childAspectRatio: 0.7,
         ),
-        itemCount: images.length,
+        itemCount: images.length + (hasMore ? 1 : 0),
         itemBuilder: (context, index) {
+          if (index >= images.length) {
+            return const Center(child: LinearProgressIndicator());
+          }
           final image = images[index];
           final isFavorite = context.watch<FavoriteBloc>().favorites.contains(image);
           return ImageItem(
@@ -114,7 +134,9 @@ class _ImageGrid extends StatelessWidget {
             isFavorite: isFavorite,
             onTap: () => context.read<FavoriteBloc>().add(AddToFavoriteEvent(image)),
           );
-        });
+        },
+      ),
+    );
   }
 }
 
