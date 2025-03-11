@@ -39,16 +39,18 @@ class SearchPage extends StatelessWidget {
 
 class _SearchBar extends StatefulWidget {
   @override
-  _SearchBarState createState() => _SearchBarState();
+  State<_SearchBar> createState() => _SearchBarState();
 }
 
 class _SearchBarState extends State<_SearchBar> {
   final TextEditingController _controller = TextEditingController();
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -86,6 +88,12 @@ class _SearchBarState extends State<_SearchBar> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 }
 
 class _SearchResults extends StatelessWidget {
@@ -111,7 +119,10 @@ class _SearchResults extends StatelessWidget {
             );
           }
         } else if (state is SearchError) {
-          return Center(child: Text(state.message));
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(child: Text(state.message)),
+          );
         }
         return const SizedBox.shrink();
       },
