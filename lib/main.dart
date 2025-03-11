@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Pixabay Search',
+        debugShowCheckedModeBanner: false,
         home: const SearchPage(),
         routes: {
           '/favorites': (context) => const FavoriteScreen(),
