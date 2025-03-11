@@ -16,7 +16,6 @@ void main() {
 
     const testQuery = 'flowers';
 
-    // Sample image data for fetch and load more events
     final testImages = [
       ImageModel(
         id: 1,
@@ -219,5 +218,37 @@ void main() {
       act: (bloc) => bloc.add(ResetSearchEvent()),
       expect: () => [isA<SearchInitial>()],
     );
+  });
+
+  group('SearchLoaded.copyWith tests', () {
+    final dummyImage = ImageModel(
+      id: 1,
+      tags: 'flower',
+      ownerName: 'Test Owner',
+      imageUrl: 'http://example.com/image.jpg',
+      imageSize: 1000,
+    );
+
+    final original = SearchLoaded(
+      images: [dummyImage],
+      hasMore: true,
+      page: 1,
+      isLoadingMore: true,
+    );
+
+    test('copyWith without providing isLoadingMore returns same value', () {
+      final copy = original.copyWith();
+      expect(copy.isLoadingMore, equals(original.isLoadingMore));
+    });
+
+    test('copyWith with null isLoadingMore returns original value', () {
+      final copy = original.copyWith(isLoadingMore: null);
+      expect(copy.isLoadingMore, equals(original.isLoadingMore));
+    });
+
+    test('copyWith with explicit isLoadingMore returns new value', () {
+      final copy = original.copyWith(isLoadingMore: false);
+      expect(copy.isLoadingMore, equals(false));
+    });
   });
 }
