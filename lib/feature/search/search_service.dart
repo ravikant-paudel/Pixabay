@@ -3,7 +3,9 @@ import 'package:pixabay/network/api_config.dart';
 import 'package:pixabay/network/api_service.dart';
 
 class SearchService {
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
+
+  SearchService({ApiService? apiService}) : _apiService = apiService ?? ApiService();
 
   Future<ApiResponseModel> searchImages(String query, {int page = 1}) async {
     final response = await _apiService.get(
