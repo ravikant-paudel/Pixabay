@@ -42,8 +42,8 @@ A Flutter application that allows users to search for images from [Pixabay]((htt
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/pixabay-image-showcase.git
-   cd pixabay-image-showcase
+   git clone https://github.com/ravikant-paudel/Pixabay.git
+   cd pixabay
 
 2. Install dependencies:
   flutter pub get
@@ -96,12 +96,6 @@ The project uses the following dependencies to ensure smooth functionality and m
 - **[mocktail](https://pub.dev/packages/mocktail)**: A mocking library for writing unit and widget tests.
 - **[bloc_test](https://pub.dev/packages/bloc_test)**: Provides utilities for testing BLoCs.
 - **[test](https://pub.dev/packages/test)**: The core testing library for Dart.
-
----
-
-## License
-
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
 ---
 
