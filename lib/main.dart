@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pixabay/feature/search/search_page.dart';
 
+import 'feature/favourite/favorite_bloc.dart';
 import 'feature/favourite/favorite_screen.dart';
-import 'feature/favourite/favourite_bloc.dart';
 import 'feature/search/search_bloc.dart';
 import 'feature/search/search_repository.dart';
 

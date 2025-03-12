@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:pixabay/feature/favourite/favourite_bloc.dart';
+import 'package:pixabay/feature/favourite/favorite_bloc.dart';
 import 'package:pixabay/feature/search/search_bloc.dart';
 import 'package:pixabay/feature/search/search_page.dart';
 
