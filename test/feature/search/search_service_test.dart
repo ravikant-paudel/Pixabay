@@ -21,7 +21,7 @@ void main() {
         requestOptions: RequestOptions(path: ''),
         statusCode: 200,
         data: {
-          'total': 265302, // Correct value here
+          'total': 265302,
           'totalHits': 500,
           'hits': [
             {
@@ -43,11 +43,10 @@ void main() {
 
       final result = await searchService.searchImages('flowers');
 
-      expect(result.total, 265302); // Corrected expected value
+      expect(result.total, 265302);
       expect(result.totalHits, 500);
       expect(result.hits.length, 1);
 
-      // Check the image model
       final image = result.hits[0];
       expect(image.id, 8342448);
       expect(image.tags, 'flower, flower background');
