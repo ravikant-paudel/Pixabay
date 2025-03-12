@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pixabay/feature/models/image_model.dart';
 
@@ -13,15 +14,24 @@ class RemoveFromFavoriteEvent extends FavoriteEvent {
   RemoveFromFavoriteEvent(this.image);
 }
 
-abstract class FavoriteState {}
+// Extend Equatable for proper state comparison
+abstract class FavoriteState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
 class FavoriteInitial extends FavoriteState {}
 
 class FavoritesUpdated extends FavoriteState {
   final List<ImageModel> favorites;
+
   FavoritesUpdated(this.favorites);
+
+  @override
+  List<Object?> get props => [favorites]; // Ensures state comparison works
 }
 
+// BloC Implementation
 class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
   final List<ImageModel> _favorites = [];
 
