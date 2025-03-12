@@ -46,10 +46,12 @@ A Flutter application that allows users to search for images from [Pixabay]((htt
    cd pixabay
 
 2. Install dependencies:
-  flutter pub get
+    ```bash
+    flutter pub get
 
 3. Run the app:
-  flutter run
+    ```bash
+    flutter run
 
 
 Project Structure
