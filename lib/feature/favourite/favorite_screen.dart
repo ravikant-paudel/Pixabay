@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pixabay/feature/favourite/favourite_bloc.dart';
+import 'package:pixabay/feature/favourite/favorite_bloc.dart';
 import 'package:pixabay/feature/models/image_model.dart';
 import 'package:pixabay/feature/search/search_page.dart';
 
